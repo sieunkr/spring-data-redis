@@ -10,7 +10,10 @@ import org.springframework.data.redis.core.RedisTemplate;
 public class DemoApplication implements CommandLineRunner {
 
     @Autowired
-    private RedisTemplate<String, String> redisTemplate;
+    private RedisTemplate<String, TestDTO> redisTestTemplate;
+
+    @Autowired
+    private RedisTemplate<String, String> redisCommonStringTemplate;
 
     public static void main(String[] args) {
         SpringApplication.run(DemoApplication.class, args);
@@ -18,6 +21,9 @@ public class DemoApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        redisTemplate.convertAndSend("ch01", "start");
+
+        redisCommonStringTemplate.convertAndSend("ch01", "string");
+
+        redisTestTemplate.convertAndSend("ch01", TestDTO.builder().name("a").price(500).build());
     }
 }

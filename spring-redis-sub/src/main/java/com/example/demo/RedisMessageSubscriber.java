@@ -12,11 +12,11 @@ import java.util.List;
 @Service
 public class RedisMessageSubscriber implements MessageListener {
 
-    public static List<String> messageList = new ArrayList<>();
+    public static List<TestDTO> messageList = new ArrayList<>();
 
     public void onMessage(Message message, byte[] pattern) {
 
-        messageList.add(message.toString());
-        log.info("Message received: " + message.toString());
+        //messageList.add(message.toString());
+        System.out.println("Message received: " + message.toString());
     }
 }
