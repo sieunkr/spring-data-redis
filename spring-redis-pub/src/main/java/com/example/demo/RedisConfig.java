@@ -2,7 +2,6 @@ package com.example.demo;
 
 
 import org.springframework.context.annotation.Configuration;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
@@ -15,14 +14,15 @@ public class RedisConfig {
 
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {
+
         LettuceConnectionFactory lettuceConnectionFactory = new LettuceConnectionFactory();
         return lettuceConnectionFactory;
     }
 
     @Bean
-    public RedisTemplate<String, String> redisCommonStringTemplate() {
-        RedisTemplate<String, String> redisTemplate = new RedisTemplate<>();
+    public RedisTemplate<String, String> stringValueRedisTemplate() {
 
+        RedisTemplate<String, String> redisTemplate = new RedisTemplate<>();
         redisTemplate.setKeySerializer(new StringRedisSerializer());
         redisTemplate.setValueSerializer(new StringRedisSerializer());
         redisTemplate.setConnectionFactory(redisConnectionFactory());
@@ -30,11 +30,11 @@ public class RedisConfig {
     }
 
     @Bean
-    public RedisTemplate<String, TestDTO> redisTestTemplate() {
-        RedisTemplate<String, TestDTO> redisTemplate = new RedisTemplate<>();
+    public RedisTemplate<String, CoffeeDTO> coffeeDTORedisTemplate() {
 
+        RedisTemplate<String, CoffeeDTO> redisTemplate = new RedisTemplate<>();
         redisTemplate.setKeySerializer(new StringRedisSerializer());
-        redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(TestDTO.class));
+        redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(CoffeeDTO.class));
         redisTemplate.setConnectionFactory(redisConnectionFactory());
         return redisTemplate;
     }

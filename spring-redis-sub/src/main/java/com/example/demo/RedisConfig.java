@@ -4,66 +4,51 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
-import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
-import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 @Configuration
 public class RedisConfig {
 
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {
+
         LettuceConnectionFactory lettuceConnectionFactory = new LettuceConnectionFactory();
         return lettuceConnectionFactory;
     }
-
 
     @Bean
     RedisMessageListenerContainer redisContainer() {
 
         RedisMessageListenerContainer container = new RedisMessageListenerContainer();
-
         container.setConnectionFactory(redisConnectionFactory());
-        container.addMessageListener(messageListener(), topic());
-
+        container.addMessageListener(messageStringListener(), topic01());
+        container.addMessageListener(messageDtoListener(), topic02());
         return container;
     }
 
-    /*
     @Bean
-    public RedisTemplate<String, String> redisCommonStringTemplate() {
-        RedisTemplate<String, String> redisTemplate = new RedisTemplate<>();
+    MessageListenerAdapter messageStringListener() {
 
-        redisTemplate.setKeySerializer(new StringRedisSerializer());
-        redisTemplate.setValueSerializer(new StringRedisSerializer());
-        redisTemplate.setConnectionFactory(redisConnectionFactory());
-        return redisTemplate;
+        return new MessageListenerAdapter(new RedisMessageStringSubscriber());
     }
 
     @Bean
-    public RedisTemplate<String, TestDTO> redisTestTemplate() {
-        RedisTemplate<String, TestDTO> redisTemplate = new RedisTemplate<>();
+    MessageListenerAdapter messageDtoListener() {
 
-        redisTemplate.setKeySerializer(new StringRedisSerializer());
-        redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(TestDTO.class));
-        redisTemplate.setConnectionFactory(redisConnectionFactory());
-        return redisTemplate;
-    }
-     */
-
-    @Bean
-    MessageListenerAdapter messageListener() {
-
-        return new MessageListenerAdapter(new RedisMessageSubscriber());
+        return new MessageListenerAdapter(new RedisMessageDtoSubscriber());
     }
 
     @Bean
-    ChannelTopic topic() {
+    ChannelTopic topic01() {
 
         return new ChannelTopic("ch01");
     }
 
+    @Bean
+    ChannelTopic topic02() {
+
+        return new ChannelTopic("ch02");
+    }
 }
